@@ -67,7 +67,8 @@ CREATE TABLE `payments` (
   `invoice_id` int(11) NOT NULL,
   `amount` int(11) NOT NULL COMMENT 'Amount of payment in USD cents',
   `paid_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`payment_id`)
+  PRIMARY KEY (`payment_id`),
+  KEY `invoices_index` (`invoice_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

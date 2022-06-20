@@ -54,7 +54,7 @@ th, td {
     text-align: right;
 }
 
-.invoices-table thead tr, .payments-row {
+.invoices-table > thead tr, .payments-row {
     border-bottom: 2px solid #aaa;
 }
 

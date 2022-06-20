@@ -6,6 +6,7 @@ use Psr\Container\ContainerInterface;
 use Slim\Exception\HttpNotFoundException;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
+use Collegeplannerpro\InterviewReport\Mailer;
 
 class Controller
 {
@@ -39,5 +40,54 @@ class Controller
 
         $response->getBody()->write($content);
         return $response;
+    }
+
+    /**
+     * Send contact payment reminder
+     * 
+     * @param  Request  $request                
+     * @param  Response $response     
+     *          
+     * @return Response           
+     */
+    
+    public function contactPaymentReminder(Request $request, Response $response): Response 
+    {
+        $queryParams = $request->getQueryParams();
+        $mailer = new Mailer();
+        $success = true;
+        $errorMessage = '';
+
+        $contactId = isset($queryParams['contact_id']) ? $queryParams['contact_id'] : null;
+        
+        // Check contact id is an integer
+        if (filter_var($contactId, FILTER_VALIDATE_INT) === false) {   
+            $success = false;
+        } else {
+            
+            try {
+                $contactDetails = $this->repository->contactDetails($contactId);
+            
+                // Assuming that if email address exists then it is valid
+                if ($contactDetails && $contactDetails['email']) {
+                    $mailerResult = $mailer->send([$contactDetails['email']], 'Payment due reminder', 'Please, please pay now!');
+                    $success = $mailerResult->isSuccess;
+                    
+                    if (!$success) {
+                        $errorMessage = $mailerResult->errorMessage;
+                    }
+                    
+                } else {
+                    $success = false;
+                }
+                
+            } catch (\Exception $e) {
+                $success = false;
+            }
+        }
+        
+        $content = json_encode(['success' => $success, 'error_message' => $errorMessage]);
+        $response->getBody()->write($content);
+        return $response->withHeader('Content-Type', 'application/json');
     }
 }

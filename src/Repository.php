@@ -11,11 +11,10 @@ class Repository
         return $this->db->query(<<<SQL
             SELECT i.*, c.first_name, c.last_name,
             (SELECT SUM(amount) FROM payments p WHERE i.invoice_id = p.invoice_id) AS amount_paid,
-            total - (SELECT SUM(amount) FROM payments p WHERE i.invoice_id = p.invoice_id) AS balance
+            total - (SELECT amount_paid) AS balance
             FROM invoices i
             NATURAL JOIN contacts c
             ORDER BY i.issued_at
-LIMIT 100  -- FIXME we need to be able to run this query without any LIMIT
 SQL
         );
     }

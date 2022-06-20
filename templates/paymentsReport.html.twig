@@ -1,6 +1,7 @@
 {% extends 'layout.html.twig' %}
 
 {% block content %}
+    
     <h2>Payments report</h2>
 
     <table class="invoices-table">
@@ -19,7 +20,7 @@
                 <td>
                     <div>{{ invoice.first_name }} {{ invoice.last_name }}</div>
                     {% if invoice.balance > 0 %}
-                        <div><button class="send-reminder-button">Send reminder email</button></div>
+                        <div><button class="send-reminder-button" data-contact-id="{{ invoice.contact_id }}">Send reminder email</button></div>
                     {% endif %}
                 </td>
                 <td>{{ invoice.issued_at | date('Y-m-d') }}</td>
@@ -51,4 +52,9 @@
         {% endfor %}
         </tbody>
     </table>
+    
+{% endblock %}
+
+{% block scripts %}
+<script src="/js/paymentsReport.js"></script>
 {% endblock %}
